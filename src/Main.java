@@ -29,7 +29,7 @@ System.out.println("RARA:(" + currentPlayer.getRareCategoryCooldownTurnsLeft() +
 System.out.println("LENDARIA:(" + currentPlayer.getLegendaryCategoryCooldownTurnsLeft() + "/6)");
                 currentPlayer.printHand();
 
-                System.out.print("\nDigite seu comando ('help', 'move Orig Dest', 'use Num', 'pass'): ");
+                System.out.print("\nDigite seu comando ('help', 'move (Peça de Origem) (Destino)', 'use (Número da Carta)', 'pass'): ");
                 if (!scanner.hasNextLine()) {
                     System.out.println("Entrada encerrada. Jogo finalizado.");
                     break;
