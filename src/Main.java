@@ -29,7 +29,7 @@ System.out.println("RARA:(" + currentPlayer.getRareCategoryCooldownTurnsLeft() +
 System.out.println("LENDARIA:(" + currentPlayer.getLegendaryCategoryCooldownTurnsLeft() + "/6)");
                 currentPlayer.printHand();
 
-                System.out.print("\nDigite seu comando ('help', 'move (Peça de Origem) (Destino)', 'use (Número da Carta)', 'pass'): ");
+                System.out.print("\nDigite seu comando ('help', 'move (Peca de Origem) (Destino)', 'use (Numero da Carta)', 'pass'): ");
                 if (!scanner.hasNextLine()) {
                     System.out.println("Entrada encerrada. Jogo finalizado.");
                     break;
@@ -48,11 +48,11 @@ System.out.println("LENDARIA:(" + currentPlayer.getLegendaryCategoryCooldownTurn
                         if (board.movePiece(fromX, fromY, toX, toY)) {
                             System.out.println("Movimento realizado!");
                             if (!board.isGameOver()) board.switchPlayer();
-                        } else System.out.println("Movimento inválido ou falhou!");
+                        } else System.out.println("Movimento invalido ou falhou!");
                     } else System.out.println("Formato: 'move <origem> <destino>' (ex: move a2 a4).");
                 } else if (input.startsWith("use ")) {
-                    if (currentPlayer.isSilenced()) System.out.println("Silêncio Real ativo! Não pode usar cartas.");
-                    else if (currentPlayer.hasPlayedCardThisTurn()) System.out.println("Você já usou uma carta neste turno!");
+                    if (currentPlayer.isSilenced()) System.out.println("Silencio Real ativo! Nao pode usar cartas.");
+                    else if (currentPlayer.hasPlayedCardThisTurn()) System.out.println("Voce ja usou uma carta neste turno!");
                     else {
                         try {
                             int cardIdx = Integer.parseInt(input.substring(4).trim()) - 1;
@@ -64,15 +64,15 @@ System.out.println("LENDARIA:(" + currentPlayer.getLegendaryCategoryCooldownTurn
                                         cardToUse.use(currentPlayer);
                                         currentPlayer.setHasPlayedCardThisTurn(true);
                                         currentPlayer.removeCard(cardToUse); // Remove a carta da mão após uso
-                                    } else System.out.println("Não foi possível aplicar o efeito da carta '" + cardToUse.getName() + "'.");
-                                } else System.out.println("Carta '" + cardToUse.getName() + "' não pode ser usada: " + cardToUse.getCooldownStatus(currentPlayer));
-                            } else System.out.println("Índice de carta inválido!");
+                                    } else System.out.println("Nao foi possivel aplicar o efeito da carta '" + cardToUse.getName() + "'.");
+                                } else System.out.println("Carta '" + cardToUse.getName() + "' nao pode ser usada: " + cardToUse.getCooldownStatus(currentPlayer));
+                            } else System.out.println("Indice de carta invalido!");
                         } catch (NumberFormatException e) { System.out.println("Formato: 'use <numero_da_carta>'."); }
                     }
                 } else if (input.equals("pass") || input.equals("endturn")) {
                     System.out.println(nomeJogador + " passou o turno.");
                     board.switchPlayer();
-                } else System.out.println("Comando não reconhecido.");
+                } else System.out.println("Comando nao reconhecido.");
             } catch (Exception e) {
                 System.err.println("ERRO INESPERADO: " + e.getMessage());
                 e.printStackTrace();
@@ -104,9 +104,9 @@ System.out.println("LENDARIA:(" + currentPlayer.getLegendaryCategoryCooldownTurn
     }
 
     private static void printHelp() {
-        System.out.println("\nComandos disponíveis:");
-        System.out.println("  move <origem> <destino> - Move uma peça (ex: move a2 a4)");
-        System.out.println("  use <número>            - Usa a carta da sua mão com o número especificado");
+        System.out.println("\nComandos disponiveis:");
+        System.out.println("  move <origem> <destino> - Move uma peca (ex: move a2 a4)");
+        System.out.println("  use <numero>            - Usa a carta da sua mao com o número especificado");
         System.out.println("  pass / endturn          - Passa o turno");
         System.out.println("  help                    - Mostra esta ajuda");
         System.out.println("  exit                    - Sai do jogo");

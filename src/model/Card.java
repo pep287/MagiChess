@@ -15,20 +15,20 @@ public class Card {
     // Lista de cartas disponíveis (adicione mais conforme necessário)
     private static final List<Card> CARTAS_DISPONIVEIS = new ArrayList<>();
     static {
-        CARTAS_DISPONIVEIS.add(new Card("Empurrão Tático", RarityType.COMUM, "Avance um peão duas casas", 1));
-        CARTAS_DISPONIVEIS.add(new Card("Recuo Seguro", RarityType.COMUM, "Volte uma peça sua à posição anterior", 1));
-        CARTAS_DISPONIVEIS.add(new Card("Mobilidade Extra", RarityType.COMUM, "Uma peça pode se mover novamente", 1));
-        CARTAS_DISPONIVEIS.add(new Card("Solo Escorregadio", RarityType.COMUM, "Cavalo inimigo não pode pular peças neste turno", 1));
-        CARTAS_DISPONIVEIS.add(new Card("Bloqueio Tático", RarityType.COMUM, "Uma peça inimiga não pode ser movida por um turno (exceto rei)", 1));
-        CARTAS_DISPONIVEIS.add(new Card("Reflexo Real", RarityType.RARA, "Se uma peça sua for capturada, a peça inimiga também é destruída", 3));
-        CARTAS_DISPONIVEIS.add(new Card("Troca Estratégica", RarityType.RARA, "Troque de lugar duas peças suas", 3));
-        CARTAS_DISPONIVEIS.add(new Card("Silêncio Real", RarityType.RARA, "Ninguém pode usar cartas por 2 turnos", 3));
-        CARTAS_DISPONIVEIS.add(new Card("Coluna de gelo", RarityType.RARA, "Uma coluna inteira do tabuleiro não pode ser usada por 2 turnos", 3));
-        CARTAS_DISPONIVEIS.add(new Card("Trato Feito", RarityType.RARA, "Consiga 2 cartas ao invés de uma", 3));
-        CARTAS_DISPONIVEIS.add(new Card("Poder Supremo", RarityType.LENDARIA, "Elimine qualquer peça do tabuleiro imediatamente (Exceto rei ou rainha)", 6));
-        CARTAS_DISPONIVEIS.add(new Card("Barreira Imperial", RarityType.LENDARIA, "Suas peças não podem ser capturadas no próximo turno", 6));
-        CARTAS_DISPONIVEIS.add(new Card("Renascimento", RarityType.LENDARIA, "Reviva uma peça capturada e coloque-a em sua linha inicial (exceto a rainha)", 6));
-        CARTAS_DISPONIVEIS.add(new Card("Domínio Dimensional", RarityType.LENDARIA, "Teleporte qualquer peça sua para qualquer casa vazia", 6));
+        CARTAS_DISPONIVEIS.add(new Card("Empurrao Tatico", RarityType.COMUM, "Avance um peao duas casas", 1));
+        CARTAS_DISPONIVEIS.add(new Card("Recuo Seguro", RarityType.COMUM, "Volte uma peca sua a posicao anterior", 1));
+        CARTAS_DISPONIVEIS.add(new Card("Mobilidade Extra", RarityType.COMUM, "Uma peca pode se mover novamente", 1));
+        CARTAS_DISPONIVEIS.add(new Card("Solo Escorregadio", RarityType.COMUM, "Cavalo inimigo nao pode pular pecas neste turno", 1));
+        CARTAS_DISPONIVEIS.add(new Card("Bloqueio Tatico", RarityType.COMUM, "Uma peca inimiga nao pode ser movida por um turno (exceto rei)", 1));
+        CARTAS_DISPONIVEIS.add(new Card("Reflexo Real", RarityType.RARA, "Se uma peca sua for capturada, a peca inimiga tambem eh destruida", 3));
+        CARTAS_DISPONIVEIS.add(new Card("Troca Estrategica", RarityType.RARA, "Troque de lugar duas pecas suas", 3));
+        CARTAS_DISPONIVEIS.add(new Card("Silencio Real", RarityType.RARA, "Ninguem pode usar cartas por 2 turnos", 3));
+        CARTAS_DISPONIVEIS.add(new Card("Coluna de gelo", RarityType.RARA, "Uma coluna inteira do tabuleiro nao pode ser usada por 2 turnos", 3));
+        CARTAS_DISPONIVEIS.add(new Card("Trato Feito", RarityType.RARA, "Consiga 2 cartas ao inves de uma", 3));
+        CARTAS_DISPONIVEIS.add(new Card("Poder Supremo", RarityType.LENDARIA, "Elimine qualquer peca do tabuleiro imediatamente (Exceto rei ou rainha)", 6));
+        CARTAS_DISPONIVEIS.add(new Card("Barreira Imperial", RarityType.LENDARIA, "Suas pecas nao podem ser capturadas no proximo turno", 6));
+        CARTAS_DISPONIVEIS.add(new Card("Renascimento", RarityType.LENDARIA, "Reviva uma peca capturada e coloque-a em sua linha inicial (exceto a rainha)", 6));
+        CARTAS_DISPONIVEIS.add(new Card("Dominio Dimensional", RarityType.LENDARIA, "Teleporte qualquer peca sua para qualquer casa vazia", 6));
     }
 
     public static Card sorteiaCartaAleatoria() {
@@ -74,7 +74,7 @@ public class Card {
         if (rarityType == RarityType.RARA && player.getRareCategoryCooldownTurnsLeft() > 0)
             return "Cooldown de categoria RARA: " + player.getRareCategoryCooldownTurnsLeft() + " turno(s) do jogador.";
         if (rarityType == RarityType.LENDARIA && player.getLegendaryCategoryCooldownTurnsLeft() > 0)
-            return "Cooldown de categoria LENDÁRIA: " + player.getLegendaryCategoryCooldownTurnsLeft() + " turno(s) do jogador.";
+            return "Cooldown de categoria LENDARIA: " + player.getLegendaryCategoryCooldownTurnsLeft() + " turno(s) do jogador.";
         return "Pronta para uso.";
     }
 

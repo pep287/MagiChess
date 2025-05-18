@@ -45,17 +45,17 @@ public class Board {
         if (destino != null && destino.isWhite == piece.isWhite) return false;
         // Bloqueio por Coluna de Gelo
         if (colunaDeGeloIndex != -1 && turnosColunaDeGeloRestantes > 0 && (fromX == colunaDeGeloIndex || toX == colunaDeGeloIndex)) {
-            System.out.println("A coluna " + (char)('a'+colunaDeGeloIndex) + " está congelada!");
+            System.out.println("A coluna " + (char)('a'+colunaDeGeloIndex) + " esta congelada!");
             return false;
         }
         // Bloqueio por Barreira Imperial (impede capturas)
         if (barreiraImperialAtiva && turnosBarreiraImperialRestantes > 0 && destino != null && destino.isWhite != piece.isWhite) {
-            System.out.println("Barreira Imperial ativa! Não é possível capturar peças neste turno.");
+            System.out.println("Barreira Imperial ativa! Nao e possivel capturar pecas neste turno.");
             return false;
         }
-        // Validação de movimento conforme tipo da peça
+        // Validacao de movimento conforme tipo da peca
         if (!isMovimentoValido(piece, fromX, fromY, toX, toY, destino)) {
-            System.out.println("Movimento inválido para a peça " + piece.type + ".");
+            System.out.println("Movimento invalido para a peca " + piece.type + ".");
             return false;
         }
         // Reflexo Real: se destino for capturado e o jogador dono de destino tiver Reflexo Real ativo
@@ -63,11 +63,11 @@ public class Board {
             Player defensor = destino.isWhite ? whitePlayer : blackPlayer;
             Player atacante = piece.isWhite ? whitePlayer : blackPlayer;
             if (defensor.isReflexoRealAtivo()) {
-                // Remove a peça atacante também
-                System.out.println("Reflexo Real: a peça capturadora também foi destruída!");
+                // Remove a peca atacante tambem
+                System.out.println("Reflexo Real: a peca capturadora tambem foi destruida!");
                 atacante.getPieces().remove(piece);
-                defensor.setReflexoRealAtivo(false); // Efeito é de uso único
-                // Remove a peça capturada normalmente abaixo
+                defensor.setReflexoRealAtivo(false); // Efeito eh de uso unico
+                // Remove a peca capturada normalmente abaixo
             }
             defensor.getPieces().remove(destino);
         }

@@ -14,12 +14,12 @@ public class CardEffects {
     public static boolean apply(Card card, Board board, Player player, Scanner scanner) {
         String nome = card.getName();
         switch (nome) {
-            case "Empurrão Tático":
-                // Avance um peão duas casas, mesmo após o primeiro movimento
-                System.out.println("Escolha o peão para avançar duas casas (ex: a2):");
+            case "Empurrao Tatico":
+                // Avance um peao duas casas, mesmo apos o primeiro movimento
+                System.out.println("Escolha o peao para avancar duas casas (ex: a2):");
                 String coord = scanner.nextLine().trim().toLowerCase();
                 if (!Board.isValidCoord(coord)) {
-                    System.out.println("Coordenada inválida.");
+                    System.out.println("Coordenada invalida.");
                     return false;
                 }
                 int x = coord.charAt(0) - 'a';
@@ -32,24 +32,24 @@ public class CardEffects {
                     }
                 }
                 if (peao == null) {
-                    System.out.println("Não há peão seu nessa casa.");
+                    System.out.println("Nao ha peao seu nessa casa.");
                     return false;
                 }
                 int dir = player.isWhite() ? -1 : 1;
                 int destY = peao.y + 2 * dir;
                 if (destY < 0 || destY > 7 || board.movePiece(peao.x, peao.y, peao.x, destY) == false) {
-                    System.out.println("Não foi possível avançar o peão.");
+                    System.out.println("Nao foi possivel avancar o peao.");
                     return false;
                 }
-                System.out.println("Peão avançou duas casas!");
+                System.out.println("Peao avancou duas casas!");
                 return true;
 
             case "Recuo Seguro":
-                // Volte uma peça sua à posição anterior sem consumir seu turno
-                System.out.println("Escolha a peça para recuar (ex: a2):");
+                // Volte uma peca sua a posicao anterior sem consumir seu turno
+                System.out.println("Escolha a peca para recuar (ex: a2):");
                 coord = scanner.nextLine().trim().toLowerCase();
                 if (!Board.isValidCoord(coord)) {
-                    System.out.println("Coordenada inválida.");
+                    System.out.println("Coordenada invalida.");
                     return false;
                 }
                 x = coord.charAt(0) - 'a';
@@ -62,28 +62,28 @@ public class CardEffects {
                     }
                 }
                 if (psel == null || psel.lastPosition == null) {
-                    System.out.println("Peça não encontrada ou sem posição anterior.");
+                    System.out.println("Peca nao encontrada ou sem posicao anterior.");
                     return false;
                 }
-                // Salva a posição atual e a última posição
+                // Salva a posicao atual e a ultima posicao
                 Point posAtual = new Point(psel.x, psel.y);
                 Point posAnterior = new Point(psel.lastPosition.x, psel.lastPosition.y);
-                // Move manualmente a peça para a posição anterior
+                // Move manualmente a peca para a posicao anterior
                 psel.x = posAnterior.x;
                 psel.y = posAnterior.y;
                 // Atualiza o tabuleiro
                 board.updateGrid();
-                // Atualiza o lastPosition para a posição de onde ela veio (para evitar loop de recuo)
+                // Atualiza o lastPosition para a posicao de onde ela veio (para evitar loop de recuo)
                 psel.lastPosition = posAtual;
-                System.out.println("Peça voltou para a posição anterior!");
+                System.out.println("Peca voltou para a posicao anterior!");
                 return true;
 
             case "Mobilidade Extra":
-                // Uma peça pode se mover novamente neste turno (mas não capturar)
-                System.out.println("Escolha a peça para mover novamente (ex: a2):");
+                // Uma peca pode se mover novamente neste turno (mas nao capturar)
+                System.out.println("Escolha a peca para mover novamente (ex: a2):");
                 coord = scanner.nextLine().trim().toLowerCase();
                 if (!Board.isValidCoord(coord)) {
-                    System.out.println("Coordenada inválida.");
+                    System.out.println("Coordenada invalida.");
                     return false;
                 }
                 x = coord.charAt(0) - 'a';
@@ -96,49 +96,49 @@ public class CardEffects {
                     }
                 }
                 if (psel == null) {
-                    System.out.println("Peça não encontrada.");
+                    System.out.println("Peca nao encontrada.");
                     return false;
                 }
                 System.out.println("Digite a casa de destino (ex: a3):");
                 String destino = scanner.nextLine().trim().toLowerCase();
                 if (!Board.isValidCoord(destino)) {
-                    System.out.println("Coordenada inválida.");
+                    System.out.println("Coordenada invalida.");
                     return false;
                 }
                 int dx = destino.charAt(0) - 'a';
                 int dy = 8 - Character.getNumericValue(destino.charAt(1));
                 Piece capt = null;
-                // Não pode capturar
-                for (Piece op : board.getCurrentPlayer() == player ? board.getCurrentPlayer() == player ? board.getCurrentPlayer() == player ? new ArrayList<Piece>() : board.getCurrentPlayer().getPieces() : new ArrayList<Piece>() : new ArrayList<Piece>()) {
+                // Nao pode capturar
+                for (Piece op : new ArrayList<Piece>()) {
                     if (op.x == dx && op.y == dy) capt = op;
                 }
                 if (board.movePiece(x, y, dx, dy) && board.getCurrentPlayer() == player && capt == null) {
-                    System.out.println("Peça movida novamente!");
+                    System.out.println("Peca movida novamente!");
                     return true;
                 } else {
-                    System.out.println("Não foi possível mover a peça (não pode capturar).");
+                    System.out.println("Nao foi possivel mover a peca (nao pode capturar).");
                     return false;
                 }
 
             case "Solo Escorregadio":
-                // Cavalo inimigo não pode pular peças neste turno
+                // Cavalo inimigo nao pode pular pecas neste turno
                 Player oponente = (player == board.getCurrentPlayer()) ? null : board.getCurrentPlayer();
                 if (oponente == null) {
-                    System.out.println("Não foi possível identificar o oponente.");
+                    System.out.println("Nao foi possivel identificar o oponente.");
                     return false;
                 }
                 for (Piece p : oponente.getPieces()) {
                     if (p.type.name().equals("CAVALO")) p.affectedBySoloEscorregadioNextTurn = true;
                 }
-                System.out.println("Cavalos do oponente não poderão pular peças neste turno.");
+                System.out.println("Cavalos do oponente nao poderao pular pecas neste turno.");
                 return true;
 
-            case "Bloqueio Tático":
-                // Uma peça inimiga não pode ser movida por um turno (exceto rei)
-                System.out.println("Escolha a peça inimiga para bloquear (ex: a2):");
+            case "Bloqueio Tatico":
+                // Uma peca inimiga nao pode ser movida por um turno (exceto rei)
+                System.out.println("Escolha a peca inimiga para bloquear (ex: a2):");
                 coord = scanner.nextLine().trim().toLowerCase();
                 if (!Board.isValidCoord(coord)) {
-                    System.out.println("Coordenada inválida.");
+                    System.out.println("Coordenada invalida.");
                     return false;
                 }
                 x = coord.charAt(0) - 'a';
@@ -153,27 +153,27 @@ public class CardEffects {
                     }
                 }
                 if (alvo == null) {
-                    System.out.println("Peça inimiga não encontrada ou é o rei.");
+                    System.out.println("Peca inimiga nao encontrada ou eh o rei.");
                     return false;
                 }
                 alvo.turnsBlockedByTatico = 2;
-                System.out.println("Peça bloqueada por um turno!");
+                System.out.println("Peca bloqueada por um turno!");
                 return true;
 
             case "Reflexo Real":
-                // Se uma peça sua for capturada, a peça inimiga também é destruída
+                // Se uma peca sua for capturada, a peca inimiga tambem eh destruida
                 player.setReflexoRealAtivo(true); // Ativa o efeito
-                System.out.println("Reflexo Real ativado! Se uma peça sua for capturada, a peça inimiga também será destruída.");
+                System.out.println("Reflexo Real ativado! Se uma peca sua for capturada, a peca inimiga tambem sera destruida.");
                 return true;
 
-            case "Troca Estratégica":
-                // Troque de lugar duas peças suas
-                System.out.println("Escolha a primeira peça (ex: a2):");
+            case "Troca Estrategica":
+                // Troque de lugar duas pecas suas
+                System.out.println("Escolha a primeira peca (ex: a2):");
                 String c1 = scanner.nextLine().trim().toLowerCase();
-                System.out.println("Escolha a segunda peça (ex: b2):");
+                System.out.println("Escolha a segunda peca (ex: b2):");
                 String c2 = scanner.nextLine().trim().toLowerCase();
                 if (!Board.isValidCoord(c1) || !Board.isValidCoord(c2)) {
-                    System.out.println("Coordenada inválida.");
+                    System.out.println("Coordenada invalida.");
                     return false;
                 }
                 int x1 = c1.charAt(0) - 'a';
@@ -186,29 +186,29 @@ public class CardEffects {
                     if (p.x == x2 && p.y == y2) p2 = p;
                 }
                 if (p1 == null || p2 == null) {
-                    System.out.println("Peças não encontradas.");
+                    System.out.println("Pecas nao encontradas.");
                     return false;
                 }
                 int tx = p1.x, ty = p1.y;
                 p1.x = p2.x; p1.y = p2.y;
                 p2.x = tx; p2.y = ty;
                 board.updateGrid();
-                System.out.println("Peças trocadas!");
+                System.out.println("Pecas trocadas!");
                 return true;
 
-            case "Silêncio Real":
+            case "Silencio Real":
                 // Silencia ambos jogadores por 2 turnos completos (4 meios-turnos)
                 board.getWhitePlayer().setTurnosSilencioRealRestantes(4);
                 board.getBlackPlayer().setTurnosSilencioRealRestantes(4);
-                System.out.println("Silêncio Real ativado! Ninguém poderá usar cartas por dois turnos completos.");
+                System.out.println("Silencio Real ativado! Ninguem podera usar cartas por dois turnos completos.");
                 return true;
 
             case "Coluna de gelo":
-                // Uma coluna inteira do tabuleiro não pode ser usada por 2 turnos
+                // Uma coluna inteira do tabuleiro nao pode ser usada por 2 turnos
                 System.out.println("Escolha a coluna para congelar (a-h):");
                 String col = scanner.nextLine().trim().toLowerCase();
                 if (col.length() != 1 || col.charAt(0) < 'a' || col.charAt(0) > 'h') {
-                    System.out.println("Coluna inválida.");
+                    System.out.println("Coluna invalida.");
                     return false;
                 }
                 int colunaIndex = col.charAt(0) - 'a';
@@ -217,18 +217,18 @@ public class CardEffects {
                 return true;
 
             case "Trato Feito":
-                // Consiga 2 cartas ao invés de uma
-                System.out.println("Você recebe 2 cartas!");
+                // Consiga 2 cartas ao inves de uma
+                System.out.println("Voce recebe 2 cartas!");
                 player.startTurn();
                 player.startTurn();
                 return true;
 
             case "Poder Supremo":
-                // Elimine qualquer peça do tabuleiro imediatamente (Exceto rei ou rainha)
-                System.out.println("Escolha a peça para eliminar (ex: a2):");
+                // Elimine qualquer peca do tabuleiro imediatamente (Exceto rei ou rainha)
+                System.out.println("Escolha a peca para eliminar (ex: a2):");
                 coord = scanner.nextLine().trim().toLowerCase();
                 if (!Board.isValidCoord(coord)) {
-                    System.out.println("Coordenada inválida.");
+                    System.out.println("Coordenada invalida.");
                     return false;
                 }
                 x = coord.charAt(0) - 'a';
@@ -241,43 +241,43 @@ public class CardEffects {
                     }
                 }
                 if (alvoSup == null) {
-                    System.out.println("Peça não encontrada ou é rei/rainha.");
+                    System.out.println("Peca nao encontrada ou e rei/rainha.");
                     return false;
                 }
                 board.getCurrentPlayer().getPieces().remove(alvoSup);
                 board.updateGrid();
-                System.out.println("Peça eliminada!");
+                System.out.println("Peca eliminada!");
                 return true;
 
             case "Barreira Imperial":
                 board.ativarBarreiraImperial();
-                System.out.println("Barreira Imperial ativada! Suas peças não podem ser capturadas no próximo turno.");
+                System.out.println("Barreira Imperial ativada! Suas pecas nao podem ser capturadas no proximo turno.");
                 return true;
 
             case "Renascimento":
-                // Reviva uma peça capturada e coloque-a em sua linha inicial (exceto a rainha)
-                System.out.println("Escolha a peça capturada para reviver (ex: PEAO, TORRE, CAVALO, BISPO, REI):");
+                // Reviva uma peca capturada e coloque-a em sua linha inicial (exceto a rainha)
+                System.out.println("Escolha a peca capturada para reviver (ex: PEAO, TORRE, CAVALO, BISPO, REI):");
                 String tipo = scanner.nextLine().trim().toUpperCase();
                 if (tipo.equals("RAINHA")) {
-                    System.out.println("Não é possível reviver a rainha.");
+                    System.out.println("Nao e possivel reviver a rainha.");
                     return false;
                 }
-                // Simulação: revive na coluna 0 da linha inicial
+                // Simulacao: revive na coluna 0 da linha inicial
                 int linha = player.isWhite() ? 7 : 0;
                 Piece revive = new Piece(model.enums.PieceType.valueOf(tipo), player.isWhite(), 0, linha);
                 player.getPieces().add(revive);
                 board.updateGrid();
-                System.out.println("Peça revivida!");
+                System.out.println("Peca revivida!");
                 return true;
 
-            case "Domínio Dimensional":
-                // Teleporte qualquer peça sua para qualquer casa vazia
-                System.out.println("Escolha a peça para teleporte (ex: a2):");
+            case "Dominio Dimensional":
+                // Teleporte qualquer peca sua para qualquer casa vazia
+                System.out.println("Escolha a peca para teleporte (ex: a2):");
                 String origem = scanner.nextLine().trim().toLowerCase();
                 System.out.println("Escolha a casa de destino (ex: b3):");
                 String destino2 = scanner.nextLine().trim().toLowerCase();
                 if (!Board.isValidCoord(origem) || !Board.isValidCoord(destino2)) {
-                    System.out.println("Coordenada inválida.");
+                    System.out.println("Coordenada invalida.");
                     return false;
                 }
                 x = origem.charAt(0) - 'a';
@@ -292,19 +292,19 @@ public class CardEffects {
                     }
                 }
                 if (psel == null) {
-                    System.out.println("Peça não encontrada.");
+                    System.out.println("Peca nao encontrada.");
                     return false;
                 }
                 if (board.movePiece(x, y, dx, dy)) {
-                    System.out.println("Peça teleportada!");
+                    System.out.println("Peca teleportada!");
                     return true;
                 } else {
-                    System.out.println("Não foi possível teleportar a peça.");
+                    System.out.println("Nao foi possivel teleportar a peca.");
                     return false;
                 }
 
             default:
-                System.out.println("Efeito da carta '" + card.getName() + "' não implementado.");
+                System.out.println("Efeito da carta '" + card.getName() + "' nao implementado.");
                 return false;
         }
     }
