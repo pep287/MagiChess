@@ -27,7 +27,7 @@ public class CardEffects {
                 int y = 8 - Character.getNumericValue(coord.charAt(1));
                 Piece peao = null;
                 for (Piece p : player.getPieces()) {
-                    if (p.initialPosX == x && p.initialPosY == y && p.pieceSurname.name().equals("PEAO")) {
+                    if (p.getPositionX() == x && p.getPositionY() == y && p.getPieceSurname().name().equals("PEAO")) {
                         peao = p;
                         break;
                     }
@@ -37,8 +37,8 @@ public class CardEffects {
                     return false;
                 }
                 int dir = player.color() == PieceColor.WHITE ? -1 : 1;
-                int destY = peao.initialPosY + 2 * dir;
-                if (destY < 0 || destY > 7 || board.movePiece(peao.initialPosX, peao.initialPosY, peao.initialPosX, destY) == false) {
+                int destY = peao.getPositionY() + 2 * dir;
+                if (destY < 0 || destY > 7 || board.movePiece(peao.getPositionX(), peao.getPositionY(), peao.getPositionX(), destY) == false) {
                     System.out.println("Nao foi possivel avancar o peao.");
                     return false;
                 }
@@ -57,25 +57,25 @@ public class CardEffects {
                 y = 8 - Character.getNumericValue(coord.charAt(1));
                 Piece psel = null;
                 for (Piece p : player.getPieces()) {
-                    if (p.initialPosX == x && p.initialPosY == y) {
+                    if (p.getPositionX() == x && p.getPositionY() == y) {
                         psel = p;
                         break;
                     }
                 }
-                if (psel == null || psel.lastPosition == null) {
+                if (psel == null || psel.getLastPosition() == null) {
                     System.out.println("Peca nao encontrada ou sem posicao anterior.");
                     return false;
                 }
                 // Salva a posicao atual e a ultima posicao
-                Point posAtual = new Point(psel.initialPosX, psel.initialPosY);
-                Point posAnterior = new Point(psel.lastPosition.x, psel.lastPosition.y);
+                Point posAtual = new Point(psel.getPositionX(), psel.getPositionY());
+                Point posAnterior = new Point(psel.getLastPosition().x, psel.getLastPosition().y);
                 // Move manualmente a peca para a posicao anterior
-                psel.initialPosX = posAnterior.x;
-                psel.initialPosY = posAnterior.y;
+                psel.setPositionX(posAnterior.x);
+                psel.setPositionY(posAnterior.y);
                 // Atualiza o tabuleiro
                 board.updateGrid();
                 // Atualiza o lastPosition para a posicao de onde ela veio (para evitar loop de recuo)
-                psel.lastPosition = posAtual;
+                psel.setLastPosition(posAtual); 
                 System.out.println("Peca voltou para a posicao anterior!");
                 return true;
 
@@ -91,7 +91,7 @@ public class CardEffects {
                 y = 8 - Character.getNumericValue(coord.charAt(1));
                 psel = null;
                 for (Piece p : player.getPieces()) {
-                    if (p.initialPosX == x && p.initialPosY == y) {
+                    if (p.getPositionX() == x && p.getPositionY() == y) {
                         psel = p;
                         break;
                     }
@@ -111,7 +111,7 @@ public class CardEffects {
                 Piece capt = null;
                 // Nao pode capturar
                 for (Piece op : new ArrayList<Piece>()) {
-                    if (op.initialPosX == dx && op.initialPosY == dy) capt = op;
+                    if (op.getPositionX() == dx && op.getPositionY() == dy) capt = op;
                 }
                 if (board.movePiece(x, y, dx, dy) && board.getCurrentPlayer() == player && capt == null) {
                     System.out.println("Peca movida novamente!");
@@ -129,7 +129,7 @@ public class CardEffects {
                     return false;
                 }
                 for (Piece p : oponente.getPieces()) {
-                    if (p.pieceSurname.name().equals("CAVALO")) p.affectedBySoloEscorregadioNextTurn = true;
+                    if (p.getPieceSurname().name().equals("CAVALO")) p.setAffectedBySoloEscorregadioNextTurn(true);
                 }
                 System.out.println("Cavalos do oponente nao poderao pular pecas neste turno.");
                 return true;
@@ -148,7 +148,7 @@ public class CardEffects {
                 Player inimigo = (player == board.getWhitePlayer()) ? board.getBlackPlayer() : board.getWhitePlayer();
                 Piece alvo = null;
                 for (Piece p : inimigo.getPieces()) {
-                    if (p.initialPosX == x && p.initialPosY == y && !p.pieceSurname.name().equals("REI")) {
+                    if (p.getPositionX() == x && p.getPositionY() == y && !p.getPieceSurname().name().equals("REI")) {
                         alvo = p;
                         break;
                     }
@@ -157,7 +157,7 @@ public class CardEffects {
                     System.out.println("Peca inimiga nao encontrada ou eh o rei.");
                     return false;
                 }
-                alvo.turnsBlockedByTatico = 2;
+                alvo.setTurnsBlockedByTatico(2);
                 System.out.println("Peca bloqueada por um turno!");
                 return true;
 
@@ -183,16 +183,18 @@ public class CardEffects {
                 int y2 = 8 - Character.getNumericValue(c2.charAt(1));
                 Piece p1 = null, p2 = null;
                 for (Piece p : player.getPieces()) {
-                    if (p.initialPosX == x1 && p.initialPosY == y1) p1 = p;
-                    if (p.initialPosX == x2 && p.initialPosY == y2) p2 = p;
+                    if (p.getPositionX() == x1 && p.getPositionY() == y1) p1 = p;
+                    if (p.getPositionX() == x2 && p.getPositionY() == y2) p2 = p;
                 }
                 if (p1 == null || p2 == null) {
                     System.out.println("Pecas nao encontradas.");
                     return false;
                 }
-                int tx = p1.initialPosX, ty = p1.initialPosY;
-                p1.initialPosX = p2.initialPosX; p1.initialPosY = p2.initialPosY;
-                p2.initialPosX = tx; p2.initialPosY = ty;
+                int tx = p1.getPositionX(), ty = p1.getPositionY();
+                p1.setPositionX(p2.getPositionX());
+                p1.setPositionY(p2.getPositionY());
+                p2.setPositionX(tx); 
+                p2.setPositionY(ty);
                 board.updateGrid();
                 System.out.println("Pecas trocadas!");
                 return true;
@@ -236,7 +238,7 @@ public class CardEffects {
                 y = 8 - Character.getNumericValue(coord.charAt(1));
                 Piece alvoSup = null;
                 for (Piece p : board.getCurrentPlayer().getPieces()) {
-                    if (p.initialPosX == x && p.initialPosY == y && !p.pieceSurname.name().equals("REI") && !p.pieceSurname.name().equals("RAINHA")) {
+                    if (p.getPositionX() == x && p.getPositionY() == y && !p.getPieceSurname().name().equals("REI") && !p.getPieceSurname().name().equals("RAINHA")) {
                         alvoSup = p;
                         break;
                     }
@@ -287,7 +289,7 @@ public class CardEffects {
                 dy = 8 - Character.getNumericValue(destino2.charAt(1));
                 psel = null;
                 for (Piece p : player.getPieces()) {
-                    if (p.initialPosX == x && p.initialPosY == y) {
+                    if (p.getPositionX() == x && p.getPositionY() == y) {
                         psel = p;
                         break;
                     }

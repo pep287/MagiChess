@@ -5,29 +5,41 @@ import model.enums.PieceColor;
 import model.enums.PieceType;
 
 public abstract class Piece {
-    public PieceType pieceSurname;
-    public int initialPosX, initialPosY;
-    public PieceColor pieceColor;
-    public int turnsProtected = 0;
-    public boolean affectedBySoloEscorregadioNextTurn = false;
-    public int turnsBlockedByTatico = 0;
-    public Point lastPosition = null;
+    private PieceType pieceSurname;
+    private int positionX, positionY;
+    private PieceColor pieceColor;
+    private int turnsProtected = 0;
+    private boolean affectedBySoloEscorregadioNextTurn = false;
+    private int turnsBlockedByTatico = 0;
+    private Point lastPosition = null;
 
     public Piece(PieceType pieceSurname, PieceColor pieceColor, int x, int y) {
         this.pieceSurname = pieceSurname; 
         this.pieceColor = pieceColor;
-        this.initialPosX = x;
-        this.initialPosY = y;
+        this.positionX = x;
+        this.positionY = y;
         this.lastPosition = new Point(x, y);
     }
 
     public void updatePosition(int newX, int newY) {
-        this.lastPosition = new Point(this.initialPosX, this.initialPosY);
-        this.initialPosX = newX;
-        this.initialPosY = newY;
+        this.lastPosition = new Point(this.positionX, this.positionY);
+        this.positionX = newX;
+        this.positionY = newY;
     }
 
     public abstract boolean validMoviment(int newPosX, int newPosY, Piece destinyPlace, Piece[][] grid);
+
+    public boolean freePath(int positionX, int positionY, int newPosX, int newPosY, Piece[][] grid) {
+        int dx = Integer.compare(newPosX, positionX);
+        int dy = Integer.compare(newPosY, positionY);
+        int x = positionX + dx, y = positionY + dy;
+        while (x != newPosX || y != newPosY) {
+            if (grid[x][y] != null) return false;
+            x += dx;
+            y += dy;
+        }
+        return true;
+    }
 
     public boolean isProtected() { return turnsProtected > 0; }
     public void setProtected(int turns) { this.turnsProtected = turns; }
@@ -44,20 +56,20 @@ public abstract class Piece {
         this.pieceSurname = pieceSurname;
     }
 
-    public int getInitialPosX() {
-        return initialPosX;
+    public int getPositionX() {
+        return positionX;
     }
 
-    public void setInitialPosX(int initialPosX) {
-        this.initialPosX = initialPosX;
+    public void setPositionX(int positionX) {
+        this.positionX = positionX;
     }
 
-    public int getInitialPosY() {
-        return initialPosY;
+    public int getPositionY() {
+        return positionY;
     }
 
-    public void setInitialPosY(int initialPosY) {
-        this.initialPosY = initialPosY;
+    public void setPositionY(int positionY) {
+        this.positionY = positionY;
     }
 
     public PieceColor getPieceColor() {

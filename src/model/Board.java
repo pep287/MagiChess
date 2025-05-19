@@ -35,8 +35,8 @@ public class Board {
         for (int y = 0; y < 8; y++)
             for (int x = 0; x < 8; x++)
                 grid[x][y] = null;
-        for (Piece p : whitePlayer.getPieces()) grid[p.initialPosX][p.initialPosY] = p;
-        for (Piece p : blackPlayer.getPieces()) grid[p.initialPosX][p.initialPosY] = p;
+        for (Piece p : whitePlayer.getPieces()) grid[p.getPositionX()][p.getPositionY()] = p;
+        for (Piece p : blackPlayer.getPieces()) grid[p.getPositionX()][p.getPositionY()] = p;
     }
 
     public boolean movePiece(int fromX, int fromY, int toX, int toY) {
@@ -48,7 +48,7 @@ public class Board {
             return false;
 
         Piece destino = grid[toX][toY];
-        if (destino != null && destino.pieceColor == piece.pieceColor) 
+        if (destino != null && destino.getPieceColor() == piece.getPieceColor()) 
             return false;
         
             // Bloqueio por Coluna de Gelo
@@ -58,21 +58,21 @@ public class Board {
         }
         
         // Bloqueio por Barreira Imperial (impede capturas)
-        if (barreiraImperialAtiva && turnosBarreiraImperialRestantes > 0 && destino != null && destino.pieceColor != piece.pieceColor) {
+        if (barreiraImperialAtiva && turnosBarreiraImperialRestantes > 0 && destino != null && destino.getPieceColor() != piece.getPieceColor()) {
             System.out.println("Barreira Imperial ativa! Nao e possivel capturar pecas neste turno.");
             return false;
         }
         
         // Validacao de movimento conforme tipo da peca
         if (!piece.validMoviment(toX, toY, destino, grid)) {
-            System.out.println("Movimento invalido para a peca " + piece.pieceSurname + ".");
+            System.out.println("Movimento invalido para a peca " + piece.getPieceSurname() + ".");
             return false;
         }
 
         // Reflexo Real: se destino for capturado e o jogador dono de destino tiver Reflexo Real ativo
-        if (destino != null && destino.pieceColor != piece.pieceColor) {
-            Player defensor = destino.pieceColor == PieceColor.WHITE ? whitePlayer : blackPlayer;
-            Player atacante = piece.pieceColor == PieceColor.WHITE  ? whitePlayer : blackPlayer;
+        if (destino != null && destino.getPieceColor() != piece.getPieceColor()) {
+            Player defensor = destino.getPieceColor() == PieceColor.WHITE ? whitePlayer : blackPlayer;
+            Player atacante = piece.getPieceColor() == PieceColor.WHITE  ? whitePlayer : blackPlayer;
             if (defensor.isReflexoRealAtivo()) {
                 // Remove a peca atacante tambem
                 System.out.println("Reflexo Real: a peca capturadora tambem foi destruida!");
@@ -84,61 +84,12 @@ public class Board {
         }
 
         grid[fromX][fromY] = null;
-        piece.initialPosX = toX;
-        piece.initialPosY = toY;
+        piece.setPositionX(toX);
+        piece.setPositionY(toY);
         grid[toX][toY] = piece;
         updateGrid();
         return true;
     }
-
-    // Validação de movimento de peças de xadrez
-    // private boolean isMovimentoValido(Piece piece, int fromX, int fromY, int toX, int toY, Piece destino) {
-    //     int dx = toX - fromX;
-    //     int dy = toY - fromY;
-    //     switch (piece.type) {
-    //         case PEAO:
-    //             int dir = piece.isWhite ? -1 : 1;
-    //             // Movimento simples para frente
-    //             if (dx == 0 && dy == dir && destino == null) return true;
-    //             // Primeiro movimento pode andar 2 casas
-    //             if (dx == 0 && dy == 2*dir && destino == null && ((piece.isWhite && fromY == 6) || (!piece.isWhite && fromY == 1)) && grid[fromX][fromY+dir] == null) return true;
-    //             // Captura diagonal
-    //             if (Math.abs(dx) == 1 && dy == dir && destino != null && destino.isWhite != piece.isWhite) return true;
-    //             return false;
-    //         case TORRE:
-    //             if (dx != 0 && dy != 0) return false;
-    //             if (!caminhoLivre(fromX, fromY, toX, toY)) return false;
-    //             return true;
-    //         case BISPO:
-    //             if (Math.abs(dx) != Math.abs(dy)) return false;
-    //             if (!caminhoLivre(fromX, fromY, toX, toY)) return false;
-    //             return true;
-    //         case RAINHA:
-    //             if ((dx == 0 || dy == 0 || Math.abs(dx) == Math.abs(dy)) && caminhoLivre(fromX, fromY, toX, toY)) return true;
-    //             return false;
-    //         case CAVALO:
-    //             if ((Math.abs(dx) == 2 && Math.abs(dy) == 1) || (Math.abs(dx) == 1 && Math.abs(dy) == 2)) return true;
-    //             return false;
-    //         case REI:
-    //             if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1) return true;
-    //             return false;
-    //     }
-    //     return false;
-    // }
-
-    // Verifica se o caminho está livre (para torre, bispo, rainha)
-    // private boolean caminhoLivre(int fromX, int fromY, int toX, int toY) {
-    //     int dx = Integer.compare(toX, fromX);
-    //     int dy = Integer.compare(toY, fromY);
-    //     int x = fromX + dx, y = fromY + dy;
-    //     while (x != toX || y != toY) {
-    //         if (grid[x][y] != null) return false;
-    //         x += dx;
-    //         y += dy;
-    //     }
-    //     return true;
-    // }
-
 
     public void printBoard() {
         System.out.println("\n    a  b  c  d  e  f  g  h");

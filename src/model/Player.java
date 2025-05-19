@@ -18,10 +18,8 @@ public class Player {
     public boolean isReflexoRealAtivo() { return reflexoRealAtivo; }
     public void setReflexoRealAtivo(boolean ativo) { reflexoRealAtivo = ativo; }
     private int commonCategoryCooldownTurnsLeft = 0;
-    // Remove uma carta da mão
-    public void removeCard(Card card) {
-        hand.remove(card);
-    }
+    
+    
     private PieceColor color;
     private List<Card> hand = new ArrayList<>();
     private List<Piece> pieces = new ArrayList<>();
@@ -36,6 +34,11 @@ public class Player {
     public Player(PieceColor color) {
         this.color = color;
         initializePieces();
+    }
+
+    // Remove uma carta da mão
+    public void removeCard(Card card) {
+        hand.remove(card);
     }
 
     private void initializePieces() {

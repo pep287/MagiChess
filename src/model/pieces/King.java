@@ -11,8 +11,8 @@ public class King extends Piece{
 
     @Override
     public boolean validMoviment(int newPosX, int newPosY, Piece destinyPlace, Piece[][] grid) {
-        int dx = newPosX - this.initialPosX;
-        int dy = newPosY - this.initialPosY;
+        int dx = newPosX - this.getPositionX();
+        int dy = newPosY - this.getPositionY();
         
         if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1) 
             return true;
