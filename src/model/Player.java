@@ -2,8 +2,15 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
-import model.Piece;
 import model.Card;
+import model.pieces.Bisp;
+import model.pieces.King;
+import model.pieces.Knight;
+import model.pieces.Pawn;
+import model.pieces.Piece;
+import model.pieces.Queen;
+import model.pieces.Tower;
+import model.enums.PieceColor;
 import model.enums.PieceType;
 
 public class Player {
@@ -15,7 +22,7 @@ public class Player {
     public void removeCard(Card card) {
         hand.remove(card);
     }
-    private boolean isWhite;
+    private PieceColor color;
     private List<Card> hand = new ArrayList<>();
     private List<Piece> pieces = new ArrayList<>();
     private int turnCount = 0;
@@ -26,23 +33,24 @@ public class Player {
     public void setTurnosSilencioRealRestantes(int v) { this.turnosSilencioRealRestantes = v; }
     public void decrementarSilencioReal() { if (turnosSilencioRealRestantes > 0) turnosSilencioRealRestantes--; }
 
-    public Player(boolean isWhite) {
-        this.isWhite = isWhite;
+    public Player(PieceColor color) {
+        this.color = color;
         initializePieces();
     }
 
     private void initializePieces() {
-        int pawnRow = isWhite ? 6 : 1;
-        int backRow = isWhite ? 7 : 0;
-        for (int i = 0; i < 8; i++) pieces.add(new Piece(PieceType.PEAO, isWhite, i, pawnRow));
-        pieces.add(new Piece(PieceType.TORRE, isWhite, 0, backRow));
-        pieces.add(new Piece(PieceType.TORRE, isWhite, 7, backRow));
-        pieces.add(new Piece(PieceType.CAVALO, isWhite, 1, backRow));
-        pieces.add(new Piece(PieceType.CAVALO, isWhite, 6, backRow));
-        pieces.add(new Piece(PieceType.BISPO, isWhite, 2, backRow));
-        pieces.add(new Piece(PieceType.BISPO, isWhite, 5, backRow));
-        pieces.add(new Piece(PieceType.RAINHA, isWhite, 3, backRow));
-        pieces.add(new Piece(PieceType.REI, isWhite, 4, backRow));
+        int pawnRow = color == PieceColor.WHITE ? 6 : 1;
+        int backRow = color == PieceColor.BLACK  ? 7 : 0;
+        for (int i = 0; i < 8; i++) pieces.add(new Pawn(PieceType.PEAO, color, i, pawnRow));
+
+        pieces.add(new Tower(PieceType.TORRE, color, 0, backRow));
+        pieces.add(new Tower(PieceType.TORRE, color, 7, backRow));
+        pieces.add(new Knight(PieceType.CAVALO, color, 1, backRow));
+        pieces.add(new Knight(PieceType.CAVALO, color, 6, backRow));
+        pieces.add(new Bisp(PieceType.BISPO, color, 2, backRow));
+        pieces.add(new Bisp(PieceType.BISPO, color, 5, backRow));
+        pieces.add(new Queen(PieceType.RAINHA, color, 3, backRow));
+        pieces.add(new King(PieceType.REI, color, 4, backRow));
     }
 
     public void startTurn() {
@@ -60,7 +68,7 @@ public class Player {
 
     public List<Piece> getPieces() { return pieces; }
     // ... (restante dos getters e métodos)
-    public boolean isWhite() { return isWhite; }
+    public PieceColor color() { return color; }
     public int getTurnCount() { return turnCount; }
     public boolean hasPlayedCardThisTurn() { return hasPlayedCardThisTurn; }
     public void setHasPlayedCardThisTurn(boolean v) { hasPlayedCardThisTurn = v; }

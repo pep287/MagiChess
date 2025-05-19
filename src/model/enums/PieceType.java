@@ -6,5 +6,6 @@ public enum PieceType {
 
     private final String whiteSymbol, blackSymbol;
     PieceType(String ws, String bs) { whiteSymbol = ws; blackSymbol = bs; }
-    public String getSymbol(boolean isWhite) { return isWhite ? whiteSymbol : blackSymbol; }
+
+    public String getSymbol(PieceColor pieceColor) { return pieceColor == PieceColor.WHITE ? whiteSymbol : blackSymbol; }
 }

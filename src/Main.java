@@ -6,15 +6,16 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
         System.out.println(Board.TITLE_ART);
         System.out.println("Bem-vindo ao Magichess! Digite 'help' para ver os comandos.\n");
-        Scanner scanner = new Scanner(System.in);
         Board board = new Board();
 
         while (!board.isGameOver()) {
             try {
                 Player currentPlayer = board.getCurrentPlayer();
-                String nomeJogador = currentPlayer.isWhite() ? "Jogador 1" : "Jogador 2";
+                String nomeJogador = currentPlayer.color() == PieceColor.WHITE ? "Jogador 1" : "Jogador 2";
                 // Informação de turno
                 System.out.println("\n--- Turno de " + nomeJogador + " (Turno #" + currentPlayer.getTurnCount() + ") ---");
 
@@ -24,9 +25,9 @@ public class Main {
                 // Informação da carta comprada removida daqui para evitar duplicidade
                 // Interface do jogador
                 System.out.println("Cooldowns");
-System.out.println("COMUM:(" + currentPlayer.getCommonCategoryCooldownTurnsLeft() + "/1)");
-System.out.println("RARA:(" + currentPlayer.getRareCategoryCooldownTurnsLeft() + "/3)");
-System.out.println("LENDARIA:(" + currentPlayer.getLegendaryCategoryCooldownTurnsLeft() + "/6)");
+                System.out.println("COMUM:(" + currentPlayer.getCommonCategoryCooldownTurnsLeft() + "/1)");
+                System.out.println("RARA:(" + currentPlayer.getRareCategoryCooldownTurnsLeft() + "/3)");
+                System.out.println("LENDARIA:(" + currentPlayer.getLegendaryCategoryCooldownTurnsLeft() + "/6)");
                 currentPlayer.printHand();
 
                 System.out.print("\nDigite seu comando ('help', 'move (Peca de Origem) (Destino)', 'use (Numero da Carta)', 'pass'): ");

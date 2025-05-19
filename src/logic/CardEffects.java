@@ -2,10 +2,11 @@ package logic;
 
 import model.Board;
 import model.Player;
-import model.Piece;
 import model.Card;
 import model.Point;
+import model.enums.PieceColor;
 import model.enums.PieceType;
+import model.pieces.Piece;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -26,7 +27,7 @@ public class CardEffects {
                 int y = 8 - Character.getNumericValue(coord.charAt(1));
                 Piece peao = null;
                 for (Piece p : player.getPieces()) {
-                    if (p.x == x && p.y == y && p.type.name().equals("PEAO")) {
+                    if (p.initialPosX == x && p.initialPosY == y && p.pieceSurname.name().equals("PEAO")) {
                         peao = p;
                         break;
                     }
@@ -35,9 +36,9 @@ public class CardEffects {
                     System.out.println("Nao ha peao seu nessa casa.");
                     return false;
                 }
-                int dir = player.isWhite() ? -1 : 1;
-                int destY = peao.y + 2 * dir;
-                if (destY < 0 || destY > 7 || board.movePiece(peao.x, peao.y, peao.x, destY) == false) {
+                int dir = player.color() == PieceColor.WHITE ? -1 : 1;
+                int destY = peao.initialPosY + 2 * dir;
+                if (destY < 0 || destY > 7 || board.movePiece(peao.initialPosX, peao.initialPosY, peao.initialPosX, destY) == false) {
                     System.out.println("Nao foi possivel avancar o peao.");
                     return false;
                 }
@@ -56,7 +57,7 @@ public class CardEffects {
                 y = 8 - Character.getNumericValue(coord.charAt(1));
                 Piece psel = null;
                 for (Piece p : player.getPieces()) {
-                    if (p.x == x && p.y == y) {
+                    if (p.initialPosX == x && p.initialPosY == y) {
                         psel = p;
                         break;
                     }
@@ -66,11 +67,11 @@ public class CardEffects {
                     return false;
                 }
                 // Salva a posicao atual e a ultima posicao
-                Point posAtual = new Point(psel.x, psel.y);
+                Point posAtual = new Point(psel.initialPosX, psel.initialPosY);
                 Point posAnterior = new Point(psel.lastPosition.x, psel.lastPosition.y);
                 // Move manualmente a peca para a posicao anterior
-                psel.x = posAnterior.x;
-                psel.y = posAnterior.y;
+                psel.initialPosX = posAnterior.x;
+                psel.initialPosY = posAnterior.y;
                 // Atualiza o tabuleiro
                 board.updateGrid();
                 // Atualiza o lastPosition para a posicao de onde ela veio (para evitar loop de recuo)
@@ -90,7 +91,7 @@ public class CardEffects {
                 y = 8 - Character.getNumericValue(coord.charAt(1));
                 psel = null;
                 for (Piece p : player.getPieces()) {
-                    if (p.x == x && p.y == y) {
+                    if (p.initialPosX == x && p.initialPosY == y) {
                         psel = p;
                         break;
                     }
@@ -110,7 +111,7 @@ public class CardEffects {
                 Piece capt = null;
                 // Nao pode capturar
                 for (Piece op : new ArrayList<Piece>()) {
-                    if (op.x == dx && op.y == dy) capt = op;
+                    if (op.initialPosX == dx && op.initialPosY == dy) capt = op;
                 }
                 if (board.movePiece(x, y, dx, dy) && board.getCurrentPlayer() == player && capt == null) {
                     System.out.println("Peca movida novamente!");
@@ -128,7 +129,7 @@ public class CardEffects {
                     return false;
                 }
                 for (Piece p : oponente.getPieces()) {
-                    if (p.type.name().equals("CAVALO")) p.affectedBySoloEscorregadioNextTurn = true;
+                    if (p.pieceSurname.name().equals("CAVALO")) p.affectedBySoloEscorregadioNextTurn = true;
                 }
                 System.out.println("Cavalos do oponente nao poderao pular pecas neste turno.");
                 return true;
@@ -147,7 +148,7 @@ public class CardEffects {
                 Player inimigo = (player == board.getWhitePlayer()) ? board.getBlackPlayer() : board.getWhitePlayer();
                 Piece alvo = null;
                 for (Piece p : inimigo.getPieces()) {
-                    if (p.x == x && p.y == y && !p.type.name().equals("REI")) {
+                    if (p.initialPosX == x && p.initialPosY == y && !p.pieceSurname.name().equals("REI")) {
                         alvo = p;
                         break;
                     }
@@ -182,16 +183,16 @@ public class CardEffects {
                 int y2 = 8 - Character.getNumericValue(c2.charAt(1));
                 Piece p1 = null, p2 = null;
                 for (Piece p : player.getPieces()) {
-                    if (p.x == x1 && p.y == y1) p1 = p;
-                    if (p.x == x2 && p.y == y2) p2 = p;
+                    if (p.initialPosX == x1 && p.initialPosY == y1) p1 = p;
+                    if (p.initialPosX == x2 && p.initialPosY == y2) p2 = p;
                 }
                 if (p1 == null || p2 == null) {
                     System.out.println("Pecas nao encontradas.");
                     return false;
                 }
-                int tx = p1.x, ty = p1.y;
-                p1.x = p2.x; p1.y = p2.y;
-                p2.x = tx; p2.y = ty;
+                int tx = p1.initialPosX, ty = p1.initialPosY;
+                p1.initialPosX = p2.initialPosX; p1.initialPosY = p2.initialPosY;
+                p2.initialPosX = tx; p2.initialPosY = ty;
                 board.updateGrid();
                 System.out.println("Pecas trocadas!");
                 return true;
@@ -235,7 +236,7 @@ public class CardEffects {
                 y = 8 - Character.getNumericValue(coord.charAt(1));
                 Piece alvoSup = null;
                 for (Piece p : board.getCurrentPlayer().getPieces()) {
-                    if (p.x == x && p.y == y && !p.type.name().equals("REI") && !p.type.name().equals("RAINHA")) {
+                    if (p.initialPosX == x && p.initialPosY == y && !p.pieceSurname.name().equals("REI") && !p.pieceSurname.name().equals("RAINHA")) {
                         alvoSup = p;
                         break;
                     }
@@ -263,10 +264,10 @@ public class CardEffects {
                     return false;
                 }
                 // Simulacao: revive na coluna 0 da linha inicial
-                int linha = player.isWhite() ? 7 : 0;
-                Piece revive = new Piece(model.enums.PieceType.valueOf(tipo), player.isWhite(), 0, linha);
-                player.getPieces().add(revive);
-                board.updateGrid();
+                int linha = player.color() == PieceColor.WHITE ? 7 : 0;
+                // Piece revive = new Piece(model.enums.PieceType.valueOf(tipo), player.color(), 0, linha);
+                // player.getPieces().add(revive);
+                // board.updateGrid();
                 System.out.println("Peca revivida!");
                 return true;
 
@@ -286,7 +287,7 @@ public class CardEffects {
                 dy = 8 - Character.getNumericValue(destino2.charAt(1));
                 psel = null;
                 for (Piece p : player.getPieces()) {
-                    if (p.x == x && p.y == y) {
+                    if (p.initialPosX == x && p.initialPosY == y) {
                         psel = p;
                         break;
                     }

@@ -1,5 +1,8 @@
 package model;
 
+import model.enums.PieceColor;
+import model.pieces.Piece;
+
 public class Board {
     public static final String TITLE_ART =
             "##   ##    ##      ####     ####     ####    ##  ##   ######    ####     ####\n" +
@@ -18,8 +21,8 @@ public class Board {
     public static boolean isValidCoord(String s) {
         return s.length() == 2 && s.charAt(0) >= 'a' && s.charAt(0) <= 'h' && s.charAt(1) >= '1' && s.charAt(1) <= '8';
     }
-    private Player whitePlayer = new Player(true);
-    private Player blackPlayer = new Player(false);
+    private Player whitePlayer = new Player(PieceColor.WHITE);
+    private Player blackPlayer = new Player(PieceColor.BLACK);
     private Player currentPlayer = whitePlayer;
     private boolean isGameOver = false;
 
@@ -32,36 +35,44 @@ public class Board {
         for (int y = 0; y < 8; y++)
             for (int x = 0; x < 8; x++)
                 grid[x][y] = null;
-        for (Piece p : whitePlayer.getPieces()) grid[p.x][p.y] = p;
-        for (Piece p : blackPlayer.getPieces()) grid[p.x][p.y] = p;
+        for (Piece p : whitePlayer.getPieces()) grid[p.initialPosX][p.initialPosY] = p;
+        for (Piece p : blackPlayer.getPieces()) grid[p.initialPosX][p.initialPosY] = p;
     }
 
     public boolean movePiece(int fromX, int fromY, int toX, int toY) {
         if (fromX < 0 || fromX >= 8 || fromY < 0 || fromY >= 8 || toX < 0 || toX >= 8 || toY < 0 || toY >= 8)
             return false;
+
         Piece piece = grid[fromX][fromY];
-        if (piece == null) return false;
+        if (piece == null) 
+            return false;
+
         Piece destino = grid[toX][toY];
-        if (destino != null && destino.isWhite == piece.isWhite) return false;
-        // Bloqueio por Coluna de Gelo
+        if (destino != null && destino.pieceColor == piece.pieceColor) 
+            return false;
+        
+            // Bloqueio por Coluna de Gelo
         if (colunaDeGeloIndex != -1 && turnosColunaDeGeloRestantes > 0 && (fromX == colunaDeGeloIndex || toX == colunaDeGeloIndex)) {
             System.out.println("A coluna " + (char)('a'+colunaDeGeloIndex) + " esta congelada!");
             return false;
         }
+        
         // Bloqueio por Barreira Imperial (impede capturas)
-        if (barreiraImperialAtiva && turnosBarreiraImperialRestantes > 0 && destino != null && destino.isWhite != piece.isWhite) {
+        if (barreiraImperialAtiva && turnosBarreiraImperialRestantes > 0 && destino != null && destino.pieceColor != piece.pieceColor) {
             System.out.println("Barreira Imperial ativa! Nao e possivel capturar pecas neste turno.");
             return false;
         }
+        
         // Validacao de movimento conforme tipo da peca
-        if (!isMovimentoValido(piece, fromX, fromY, toX, toY, destino)) {
-            System.out.println("Movimento invalido para a peca " + piece.type + ".");
+        if (!piece.validMoviment(toX, toY, destino, grid)) {
+            System.out.println("Movimento invalido para a peca " + piece.pieceSurname + ".");
             return false;
         }
+
         // Reflexo Real: se destino for capturado e o jogador dono de destino tiver Reflexo Real ativo
-        if (destino != null && destino.isWhite != piece.isWhite) {
-            Player defensor = destino.isWhite ? whitePlayer : blackPlayer;
-            Player atacante = piece.isWhite ? whitePlayer : blackPlayer;
+        if (destino != null && destino.pieceColor != piece.pieceColor) {
+            Player defensor = destino.pieceColor == PieceColor.WHITE ? whitePlayer : blackPlayer;
+            Player atacante = piece.pieceColor == PieceColor.WHITE  ? whitePlayer : blackPlayer;
             if (defensor.isReflexoRealAtivo()) {
                 // Remove a peca atacante tambem
                 System.out.println("Reflexo Real: a peca capturadora tambem foi destruida!");
@@ -71,61 +82,64 @@ public class Board {
             }
             defensor.getPieces().remove(destino);
         }
+
         grid[fromX][fromY] = null;
-        piece.x = toX;
-        piece.y = toY;
+        piece.initialPosX = toX;
+        piece.initialPosY = toY;
         grid[toX][toY] = piece;
         updateGrid();
         return true;
     }
 
     // Validação de movimento de peças de xadrez
-    private boolean isMovimentoValido(Piece piece, int fromX, int fromY, int toX, int toY, Piece destino) {
-        int dx = toX - fromX;
-        int dy = toY - fromY;
-        switch (piece.type) {
-            case PEAO:
-                int dir = piece.isWhite ? -1 : 1;
-                // Movimento simples para frente
-                if (dx == 0 && dy == dir && destino == null) return true;
-                // Primeiro movimento pode andar 2 casas
-                if (dx == 0 && dy == 2*dir && destino == null && ((piece.isWhite && fromY == 6) || (!piece.isWhite && fromY == 1)) && grid[fromX][fromY+dir] == null) return true;
-                // Captura diagonal
-                if (Math.abs(dx) == 1 && dy == dir && destino != null && destino.isWhite != piece.isWhite) return true;
-                return false;
-            case TORRE:
-                if (dx != 0 && dy != 0) return false;
-                if (!caminhoLivre(fromX, fromY, toX, toY)) return false;
-                return true;
-            case BISPO:
-                if (Math.abs(dx) != Math.abs(dy)) return false;
-                if (!caminhoLivre(fromX, fromY, toX, toY)) return false;
-                return true;
-            case RAINHA:
-                if ((dx == 0 || dy == 0 || Math.abs(dx) == Math.abs(dy)) && caminhoLivre(fromX, fromY, toX, toY)) return true;
-                return false;
-            case CAVALO:
-                if ((Math.abs(dx) == 2 && Math.abs(dy) == 1) || (Math.abs(dx) == 1 && Math.abs(dy) == 2)) return true;
-                return false;
-            case REI:
-                if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1) return true;
-                return false;
-        }
-        return false;
-    }
+    // private boolean isMovimentoValido(Piece piece, int fromX, int fromY, int toX, int toY, Piece destino) {
+    //     int dx = toX - fromX;
+    //     int dy = toY - fromY;
+    //     switch (piece.type) {
+    //         case PEAO:
+    //             int dir = piece.isWhite ? -1 : 1;
+    //             // Movimento simples para frente
+    //             if (dx == 0 && dy == dir && destino == null) return true;
+    //             // Primeiro movimento pode andar 2 casas
+    //             if (dx == 0 && dy == 2*dir && destino == null && ((piece.isWhite && fromY == 6) || (!piece.isWhite && fromY == 1)) && grid[fromX][fromY+dir] == null) return true;
+    //             // Captura diagonal
+    //             if (Math.abs(dx) == 1 && dy == dir && destino != null && destino.isWhite != piece.isWhite) return true;
+    //             return false;
+    //         case TORRE:
+    //             if (dx != 0 && dy != 0) return false;
+    //             if (!caminhoLivre(fromX, fromY, toX, toY)) return false;
+    //             return true;
+    //         case BISPO:
+    //             if (Math.abs(dx) != Math.abs(dy)) return false;
+    //             if (!caminhoLivre(fromX, fromY, toX, toY)) return false;
+    //             return true;
+    //         case RAINHA:
+    //             if ((dx == 0 || dy == 0 || Math.abs(dx) == Math.abs(dy)) && caminhoLivre(fromX, fromY, toX, toY)) return true;
+    //             return false;
+    //         case CAVALO:
+    //             if ((Math.abs(dx) == 2 && Math.abs(dy) == 1) || (Math.abs(dx) == 1 && Math.abs(dy) == 2)) return true;
+    //             return false;
+    //         case REI:
+    //             if (Math.abs(dx) <= 1 && Math.abs(dy) <= 1) return true;
+    //             return false;
+    //     }
+    //     return false;
+    // }
 
     // Verifica se o caminho está livre (para torre, bispo, rainha)
-    private boolean caminhoLivre(int fromX, int fromY, int toX, int toY) {
-        int dx = Integer.compare(toX, fromX);
-        int dy = Integer.compare(toY, fromY);
-        int x = fromX + dx, y = fromY + dy;
-        while (x != toX || y != toY) {
-            if (grid[x][y] != null) return false;
-            x += dx;
-            y += dy;
-        }
-        return true;
-    }
+    // private boolean caminhoLivre(int fromX, int fromY, int toX, int toY) {
+    //     int dx = Integer.compare(toX, fromX);
+    //     int dy = Integer.compare(toY, fromY);
+    //     int x = fromX + dx, y = fromY + dy;
+    //     while (x != toX || y != toY) {
+    //         if (grid[x][y] != null) return false;
+    //         x += dx;
+    //         y += dy;
+    //     }
+    //     return true;
+    // }
+
+
     public void printBoard() {
         System.out.println("\n    a  b  c  d  e  f  g  h");
         System.out.println("   -------------------------");
